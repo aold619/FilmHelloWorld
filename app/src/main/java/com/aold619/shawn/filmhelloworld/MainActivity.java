@@ -5,50 +5,52 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
+import com.aold619.shawn.filmhelloworld.utilities.JSONUtils;
+import com.aold619.shawn.filmhelloworld.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-public class MainActivity extends AppCompatActivity {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    private Button posterButton;
-    private Button trailerButton;
-    private GridView imagesGridView;
-    private VideoView trailerView;
+import java.io.IOException;
+import java.net.URL;
+
+public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmAdapterOnClickHandler {
+
+//    private GridView imagesGridView;
     private ProgressBar mLoadingIndicator;
+    private RecyclerView mRecyclerView;
+    private FilmAdapter filmAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imagesGridView = findViewById(R.id.gv_images);
-        trailerView = findViewById(R.id.vv_trailer);
-        posterButton = findViewById(R.id.bt_poster);
-        trailerButton = findViewById(R.id.bt_trailer);
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        mRecyclerView = findViewById(R.id.recycleview_film);
+        GridLayoutManager layoutManager = new GridLayoutManager(
+                        this, 2,
+                        GridLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
 
-        posterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                trailerView.setVisibility(View.GONE);
-                imagesGridView.setVisibility(View.VISIBLE);
-            }
-        });
-        trailerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imagesGridView.setVisibility(View.GONE);
-                trailerView.setVisibility(View.VISIBLE);
-            }
-        });
+        filmAdapter = new FilmAdapter(this);
+        mRecyclerView.setAdapter(filmAdapter);
 
         loadFilmData();
     }
@@ -60,8 +62,22 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_refresh) {
+            loadFilmData();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void loadFilmData() {
         new FetchFilmData().execute();
+    }
+
+    @Override
+    public void onClick() {
+
     }
 
     public class FetchFilmData extends AsyncTask<String, Void, String[]> {
@@ -74,22 +90,34 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String[] doInBackground(String... params) {
-            Uri uri = Uri.parse("https://api.themoviedb.org/3/discover/movie?api_key=148de4c038b0812ca597b8d2b322195d")
-                    .buildUpon().build();
+            URL url = NetworkUtils.buildAPIUrl(
+                    NetworkUtils.FEATURE_DISCOVER, NetworkUtils.FAVORITE);
+            String result = null;
+            String[] postersFileName = null;
+            try {
+                result = NetworkUtils.getResponseFromHttpUrl(url);
+                postersFileName = JSONUtils.getPosterFilmNames(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
 
+            System.out.println();
 
-            return new String[0];
+            return postersFileName;
         }
 
         @Override
-        protected void onPostExecute(String[] filmData) {
-            mLoadingIndicator.setVisibility(View.GONE);
-            if (filmData != null) {
-                // TODO: show the film's poster
+        protected void onPostExecute(String[] postersFileName) {
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            if (postersFileName != null) {
+                filmAdapter.setFilmData(postersFileName);
             } else {
                 // TODO: show the error message
             }
         }
+
+
     }
 
 }

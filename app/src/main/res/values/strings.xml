@@ -4,4 +4,6 @@
     <string name="trailer">trailer</string>
     <string name="settings">settings</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="refresh">refresh</string>
+    <string name="error_message">An error</string>
 </resources>
