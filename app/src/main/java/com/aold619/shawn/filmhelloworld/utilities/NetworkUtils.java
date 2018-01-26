@@ -18,8 +18,7 @@ import java.util.Scanner;
 public final class NetworkUtils {
     private static final String API_BASE_URL = "https://api.themoviedb.org/3";
     private static final String POSTER_BASE_URL = "https://image.tmdb.org/t/p";
-    public static final String SMALL_SIZE = "w185";
-    public static final String NORMAL_SIZE = "w342";
+    public static final String POSTER_SIZE = "w185_and_h278_bestv2";
     private static final String SORT_BY = "sort_by";
     public static final String FEATURE_SEARCH = "search/movie";
     public static final String FEATURE_DISCOVER = "discover/movie";

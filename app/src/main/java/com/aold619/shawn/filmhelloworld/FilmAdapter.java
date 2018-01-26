@@ -41,13 +41,14 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.FilmAdapterVie
         int layoutIdForPosterItem = R.layout.poster_list_item;
         LayoutInflater inflater = LayoutInflater.from(mContext);
         boolean shouldAttachToParentImmediately = false;
-        View view = inflater.inflate(layoutIdForPosterItem, parent, shouldAttachToParentImmediately);
+        View view = inflater.inflate(layoutIdForPosterItem, null, false);
         return new FilmAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(FilmAdapterViewHolder holder, int position) {
-        Picasso.with(mContext).load(mUriList.get(position)).into(holder.posterImageView);
+        Picasso.with(mContext).load(mUriList.get(position))
+                .into(holder.posterImageView);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.FilmAdapterVie
     void setFilmData(String[] posterNames) {
         mUriList = new ArrayList<>();
         for (String posterName : posterNames) {
-            mUriList.add(NetworkUtils.buildPosterUri(NetworkUtils.SMALL_SIZE, posterName));
+            mUriList.add(NetworkUtils.buildPosterUri(NetworkUtils.POSTER_SIZE, posterName));
         }
         notifyDataSetChanged();
     }

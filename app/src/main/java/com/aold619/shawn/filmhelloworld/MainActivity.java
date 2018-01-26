@@ -1,32 +1,20 @@
 package com.aold619.shawn.filmhelloworld;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.VideoView;
+import android.widget.TextView;
 
 import com.aold619.shawn.filmhelloworld.utilities.JSONUtils;
 import com.aold619.shawn.filmhelloworld.utilities.NetworkUtils;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmAdapterOnClickHandler {
@@ -35,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
     private ProgressBar mLoadingIndicator;
     private RecyclerView mRecyclerView;
     private FilmAdapter filmAdapter;
+    private TextView errorMessageDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +31,11 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
         setContentView(R.layout.activity_main);
 
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        errorMessageDisplay = findViewById(R.id.tv_error_message_display);
         mRecyclerView = findViewById(R.id.recycleview_film);
         GridLayoutManager layoutManager = new GridLayoutManager(
-                        this, 2,
-                        GridLayoutManager.HORIZONTAL, false);
+                        this, 3,
+                        GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
@@ -72,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
     }
 
     private void loadFilmData() {
+        showPosterDataView();
         new FetchFilmData().execute();
     }
 
@@ -93,10 +84,10 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
             URL url = NetworkUtils.buildAPIUrl(
                     NetworkUtils.FEATURE_DISCOVER, NetworkUtils.FAVORITE);
             String result = null;
-            String[] postersFileName = null;
+            String[] postersFileNames = null;
             try {
                 result = NetworkUtils.getResponseFromHttpUrl(url);
-                postersFileName = JSONUtils.getPosterFilmNames(result);
+                postersFileNames = JSONUtils.getPosterFilmNames(result);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -104,20 +95,30 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
 
             System.out.println();
 
-            return postersFileName;
+            return postersFileNames;
         }
 
         @Override
-        protected void onPostExecute(String[] postersFileName) {
+        protected void onPostExecute(String[] postersFileNames) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (postersFileName != null) {
-                filmAdapter.setFilmData(postersFileName);
+            if (postersFileNames != null) {
+                filmAdapter.setFilmData(postersFileNames);
             } else {
-                // TODO: show the error message
+                showErrorMessage();
             }
         }
 
 
+    }
+
+    private void showPosterDataView() {
+        errorMessageDisplay.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorMessage() {
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        errorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
 }

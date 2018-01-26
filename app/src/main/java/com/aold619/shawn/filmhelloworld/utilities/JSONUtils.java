@@ -26,7 +26,7 @@ public final class JSONUtils {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject film = jsonArray.getJSONObject(i);
-            posterNames[i] = film.getString("poster_path");
+            posterNames[i] = film.getString("poster_path").replace("/", "");
         }
 
         return posterNames;
