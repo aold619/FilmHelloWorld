@@ -65,11 +65,11 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
         String[] params = new String[2];
         params[0] = NetworkUtils.FEATURE_DISCOVER;
         switch (itemId) {
-            case R.id.menu_refresh:
+            case R.id.menu_sort_by_popularity:
                 filmAdapter.setFilmData(null);
                 params[1] = NetworkUtils.FAVORITE;
                 loadFilmData(params); break;
-            case R.id.menu_sort_by_popularity:
+            case R.id.menu_sort_by_vote:
                 params[1] = NetworkUtils.VOTE;
                 loadFilmData(params); break;
             default:
@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
         try {
             intent.putExtra("title", movie.getString("title"));
             intent.putExtra("poster_path", movie.getString("poster_path"));
-            intent.putExtra("overview", movie.getString("title"));
-            intent.putExtra("vote_average", movie.getString("title"));
-            intent.putExtra("release_date", movie.getString("title"));
+            intent.putExtra("overview", movie.getString("overview"));
+            intent.putExtra("vote_average", movie.getString("vote_average"));
+            intent.putExtra("release_date", movie.getString("release_date"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

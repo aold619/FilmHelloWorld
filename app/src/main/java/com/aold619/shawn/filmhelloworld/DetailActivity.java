@@ -1,6 +1,7 @@
 package com.aold619.shawn.filmhelloworld;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.aold619.shawn.filmhelloworld.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
@@ -40,7 +42,10 @@ public class DetailActivity extends AppCompatActivity {
                 mTitle.setText(intent.getStringExtra("title"));
             }
             if (intent.hasExtra("poster_path")) {
-//                Picasso.with(this).load()
+                Uri uri = NetworkUtils
+                        .buildPosterUri(NetworkUtils.BIG_SIZE,
+                                intent.getStringExtra("poster_path").replace("/", ""));
+                Picasso.with(this).load(uri).into(mPoster);
             }
             if (intent.hasExtra("overview")) {
                 mOverwrite.setText(intent.getStringExtra("overview"));

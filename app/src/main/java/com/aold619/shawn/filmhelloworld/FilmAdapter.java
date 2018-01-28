@@ -58,7 +58,7 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.FilmAdapterVie
     public void onBindViewHolder(FilmAdapterViewHolder holder, int position) {
         List<Uri> mUriList = new ArrayList<>();
         for (String posterName : posters) {
-            mUriList.add(NetworkUtils.buildPosterUri(NetworkUtils.POSTER_SIZE, posterName));
+            mUriList.add(NetworkUtils.buildPosterUri(NetworkUtils.SMALL_SIZE, posterName));
         }
         Picasso.with(mContext).load(mUriList.get(position))
                 .into(holder.posterImageView);

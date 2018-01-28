@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="8dp">
 
     <ImageView
         android:id="@+id/iv_detail_poster"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"/>
+    <TextView
+        android:id="@+id/tv_param_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="title:"
+        android:layout_below="@id/iv_detail_poster"/>
     <TextView
         android:id="@+id/tv_detail_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="22sp" />
+        android:layout_toRightOf="@id/tv_param_name"
+        android:layout_toEndOf="@id/tv_param_name"
+        android:layout_below="@id/tv_param_name"
+        />
     <TextView
         android:id="@+id/tv_detail_vote"
         android:layout_width="wrap_content"
@@ -27,4 +38,4 @@
         android:id="@+id/tv_detail_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-</FrameLayout>
+</RelativeLayout>

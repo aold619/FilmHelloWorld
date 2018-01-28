@@ -10,7 +10,7 @@
         android:orderInCategory="1"
         app:showAsAction="collapseActionView" />
     <item
-        android:id="@+id/menu_refresh"
+        android:id="@+id/menu_sort_by_vote"
         android:title="@string/sort_vote"
         android:orderInCategory="2"
         app:showAsAction="collapseActionView"/>
