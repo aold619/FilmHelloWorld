@@ -4,6 +4,7 @@
     <string name="trailer">trailer</string>
     <string name="settings">settings</string>
     <string name="title_activity_detail">DetailActivity</string>
-    <string name="refresh">refresh</string>
+    <string name="sort_vote">sort by vote</string>
     <string name="error_message">An error</string>
+    <string name="sort_popularity">sort by popularity</string>
 </resources>

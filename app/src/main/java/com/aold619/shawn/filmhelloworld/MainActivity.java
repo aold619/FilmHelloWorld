@@ -1,5 +1,7 @@
 package com.aold619.shawn.filmhelloworld;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,26 +12,31 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.aold619.shawn.filmhelloworld.utilities.JSONUtils;
 import com.aold619.shawn.filmhelloworld.utilities.NetworkUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmAdapterOnClickHandler {
 
-//    private GridView imagesGridView;
     private ProgressBar mLoadingIndicator;
     private RecyclerView mRecyclerView;
     private FilmAdapter filmAdapter;
     private TextView errorMessageDisplay;
+//    private RadioGroup radioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
         errorMessageDisplay = findViewById(R.id.tv_error_message_display);
         mRecyclerView = findViewById(R.id.recycleview_film);
@@ -42,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
         filmAdapter = new FilmAdapter(this);
         mRecyclerView.setAdapter(filmAdapter);
 
-        loadFilmData();
+        loadFilmData(null);
     }
 
     @Override
@@ -55,60 +62,82 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.FilmA
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.menu_refresh) {
-            loadFilmData();
+        String[] params = new String[2];
+        params[0] = NetworkUtils.FEATURE_DISCOVER;
+        switch (itemId) {
+            case R.id.menu_refresh:
+                filmAdapter.setFilmData(null);
+                params[1] = NetworkUtils.FAVORITE;
+                loadFilmData(params); break;
+            case R.id.menu_sort_by_popularity:
+                params[1] = NetworkUtils.VOTE;
+                loadFilmData(params); break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadFilmData() {
-        showPosterDataView();
-        new FetchFilmData().execute();
+    private void loadFilmData(String[] params) {
+        new FetchFilmData().execute(params);
     }
 
     @Override
-    public void onClick() {
-
+    public void onClick(JSONObject movie) {
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+        Intent intent = new Intent(context, destinationClass);
+        try {
+            intent.putExtra("title", movie.getString("title"));
+            intent.putExtra("poster_path", movie.getString("poster_path"));
+            intent.putExtra("overview", movie.getString("title"));
+            intent.putExtra("vote_average", movie.getString("title"));
+            intent.putExtra("release_date", movie.getString("title"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        startActivity(intent);
     }
 
-    public class FetchFilmData extends AsyncTask<String, Void, String[]> {
-
+    public class FetchFilmData extends AsyncTask<String, Void, JSONArray> {
         @Override
         protected void onPreExecute() {
-            mLoadingIndicator.setVisibility(View.VISIBLE);
             super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
-            URL url = NetworkUtils.buildAPIUrl(
-                    NetworkUtils.FEATURE_DISCOVER, NetworkUtils.FAVORITE);
+        protected JSONArray doInBackground(String... params) {
+            if (params == null) {
+                params = new String[2];
+                params[0] = NetworkUtils.FEATURE_DISCOVER;
+                params[1] = NetworkUtils.FAVORITE;
+            }
+            URL url = NetworkUtils.buildAPIUrl(params[0], params[1]);
             String result = null;
-            String[] postersFileNames = null;
+            JSONArray movieData = null;
             try {
                 result = NetworkUtils.getResponseFromHttpUrl(url);
-                postersFileNames = JSONUtils.getPosterFilmNames(result);
+                movieData = JSONUtils.getAllFilmData(result);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
 
-            System.out.println();
-
-            return postersFileNames;
+            return movieData;
         }
 
         @Override
-        protected void onPostExecute(String[] postersFileNames) {
+        protected void onPostExecute(JSONArray movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (postersFileNames != null) {
-                filmAdapter.setFilmData(postersFileNames);
+
+            if (movieData != null) {
+                showPosterDataView();
+                filmAdapter.setFilmData(movieData);
             } else {
                 showErrorMessage();
             }
         }
-
-
     }
 
     private void showPosterDataView() {

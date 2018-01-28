@@ -1,6 +1,7 @@
 package com.aold619.shawn.filmhelloworld.utilities;
 
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,8 @@ import java.util.Scanner;
  */
 
 public final class NetworkUtils {
+    private static final String TAG = NetworkUtils.class.getSimpleName();
+
     private static final String API_BASE_URL = "https://api.themoviedb.org/3";
     private static final String POSTER_BASE_URL = "https://image.tmdb.org/t/p";
     public static final String POSTER_SIZE = "w185_and_h278_bestv2";
@@ -56,6 +59,7 @@ public final class NetworkUtils {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+        Log.v(TAG, "Built URI " + url);
         return url;
     }
 

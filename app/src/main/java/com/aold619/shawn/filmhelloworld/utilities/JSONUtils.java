@@ -4,6 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Format the film data
  *
@@ -14,25 +17,38 @@ public final class JSONUtils {
     private static final String STATUS_CODE = "status_code";
     private static final String FILM_ARRAY = "results";
 
-    public static String[] getPosterFilmNames(String results) throws JSONException {
-
+    public static JSONArray getAllFilmData(String results) throws JSONException {
         JSONObject jsonObject = new JSONObject(results);
         if (jsonObject.has(STATUS_CODE)) {
             return null;
         }
+        return jsonObject.getJSONArray(FILM_ARRAY);
+    }
 
-        JSONArray jsonArray = jsonObject.getJSONArray(FILM_ARRAY);
-        String[] posterNames = new String[jsonArray.length()];
+    public static Map<String, String[]> getGroupedData(JSONArray movieData) throws JSONException {
+        Map<String, String[]> groupedData = new HashMap<>();
+        if (movieData != null) {
+            String[] posters = new String[movieData.length()];
+            String[] titles = new String[movieData.length()];
+            String[] overviews = new String[movieData.length()];
+            String[] votes = new String[movieData.length()];
+            String[] dates = new String[movieData.length()];
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject film = jsonArray.getJSONObject(i);
-            posterNames[i] = film.getString("poster_path").replace("/", "");
+            for (int i = 0; i < movieData.length(); i++) {
+                JSONObject film = movieData.getJSONObject(i);
+                posters[i] = film.getString("poster_path").replace("/", "");
+                titles[i] = film.getString("title");
+                overviews[i] = film.getString("overview");
+                votes[i] = film.getString("vote_average");
+                dates[i] = film.getString("release_date");
+            }
+            groupedData.put("posters", posters);
+            groupedData.put("titles", titles);
+            groupedData.put("overviews", overviews);
+            groupedData.put("votes", votes);
+            groupedData.put("dates", dates);
         }
-
-        return posterNames;
+        return groupedData;
     }
 
-    public static void getFilmData() {
-
-    }
 }

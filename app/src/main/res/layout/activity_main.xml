@@ -6,7 +6,6 @@
     android:orientation="vertical"
     tools:context="com.aold619.shawn.filmhelloworld.MainActivity">
 
-    <!-- TODO build a grid view to show the images from movieDB -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycleview_film"
         android:layout_width="match_parent"
@@ -28,5 +27,22 @@
         android:layout_gravity="center"
         android:visibility="invisible"
         android:foregroundGravity="center"/>
+
+    <RadioGroup
+        android:id="@+id/rg_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="invisible">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1111111"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2222222"/>
+    </RadioGroup>
 
 </FrameLayout>
