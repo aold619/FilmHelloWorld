@@ -33,7 +33,7 @@ public final class NetworkUtils {
     /**
      * write your API Key here
      */
-    private static final String API_KEY = "148de4c038b0812ca597b8d2b322195d";
+    private static final String API_KEY = "";
     private static final String PARAM_API_KEY = "api_key";
 
     private static final String format = "json";
